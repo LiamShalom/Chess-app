@@ -4,7 +4,6 @@ import { Pawn } from "./Pawn";
 import { Piece } from "./Piece";
 import { Position } from "./Position";
 import { Move } from "./Move";
-import { SimplifiedPiece } from "./SimplifiedPiece";
 
 export class Board {
     pieces: Piece[];
@@ -13,18 +12,19 @@ export class Board {
     stalemate: boolean;
     draw: boolean;
     moves: Move[];
-    boardHistory: {[key: string]: number};
+    repeatedPositions: {[key: string]: number};
     turnsWithNoCaptureOrPawnMove: number;
     ambiguity?: "row" | "column";
     castle?: string;
 
-    constructor(pieces: Piece[], totalTurns: number, moves: Move[], boardHistory: {[key: string]: number}, turnsWithNoCaptureOrPawnMove: number) {
+    constructor(pieces: Piece[], totalTurns: number, moves: Move[], repeatedPositions: {[key: string]: number},
+         turnsWithNoCaptureOrPawnMove: number) {
         this.pieces = pieces;
         this.totalTurns = totalTurns;
         this.stalemate = false;
         this.draw = false;
         this.moves = moves;
-        this.boardHistory = boardHistory
+        this.repeatedPositions = repeatedPositions
         this.turnsWithNoCaptureOrPawnMove = turnsWithNoCaptureOrPawnMove;
     }
 
@@ -203,17 +203,16 @@ export class Board {
     }
 
     checkForThreefoldRepetition(): void {
-        const simplifiedPieces = this.pieces.map(p => new SimplifiedPiece(p));
-        const simplifiedPiecesStringify = JSON.stringify(simplifiedPieces);
+        const piecesStringify = JSON.stringify(this.pieces);
 
-        if(this.boardHistory[simplifiedPiecesStringify] === undefined){
-            this.boardHistory[simplifiedPiecesStringify] = 1;
+        if(this.repeatedPositions[piecesStringify] === undefined){
+            this.repeatedPositions[piecesStringify] = 1;
         
         }else{
-            this.boardHistory[simplifiedPiecesStringify] += 1;
+            this.repeatedPositions[piecesStringify] += 1;
         }
 
-        if(this.boardHistory[simplifiedPiecesStringify] === 3){
+        if(this.repeatedPositions[piecesStringify] === 3){
             this.draw = true;
         }
     }
@@ -271,6 +270,7 @@ export class Board {
     }
 
     clone(): Board {
-        return new Board(this.pieces.map(p => p.clone()), this.totalTurns, this.moves.map(m => m.clone()), this.boardHistory, this.turnsWithNoCaptureOrPawnMove);
+        return new Board(this.pieces.map(p => p.clone()), this.totalTurns, this.moves.map(m => m.clone()),
+         this.repeatedPositions, this.turnsWithNoCaptureOrPawnMove);
     }
 }

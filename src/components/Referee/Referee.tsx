@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, MouseEvent } from "react";
 import { initialBoard } from "../../Constants";
 import { Piece, Position } from "../../models";
 import Chessboard from "../Chessboard/Chessboard";
@@ -14,6 +14,7 @@ export default function Referee() {
     const modalRef = useRef<HTMLDivElement>(null);
     const endgameModalRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const boardHistory = useRef<Board[]>([initialBoard.clone()]);
 
     useEffect(() => {
         const el = containerRef.current;
@@ -21,6 +22,10 @@ export default function Referee() {
     }, [board.moves]);
 
     function playMove(playedPiece: Piece, destination: Position): boolean {
+        // If not on current move
+        if (boardHistory.current.length !== board.totalTurns) {
+            return false;
+        }
         // If the playing piece doesnt have any moves
         if(playedPiece.possibleMoves === undefined) return false;
 
@@ -41,9 +46,12 @@ export default function Referee() {
 
         // playMove modifies the board thus we setBoard
         const clonedBoard = board.clone();
-        clonedBoard.totalTurns += 1
+        clonedBoard.totalTurns += 1;
+        console.log(clonedBoard.totalTurns);
         // Playing the move
         playedMoveIsValid = clonedBoard.playMove(enPassantMove, validMove, playedPiece, destination);
+        if(playedMoveIsValid) boardHistory.current.push(clonedBoard); 
+        console.log(boardHistory)
 
         checkForEndGame(clonedBoard);
         setBoard(clonedBoard);
@@ -82,7 +90,7 @@ export default function Referee() {
             return;
         }
 
-        setBoard((previousBoard) => {
+        setBoard(() => {
             const clonedBoard = board.clone();
             clonedBoard.pieces = clonedBoard.pieces.reduce((results, piece) => {
                 if (piece.samePiecePosition(promotionPawn)) {
@@ -128,6 +136,18 @@ export default function Referee() {
         }
     }
 
+    function doMoveBack(e: React.MouseEvent<HTMLButtonElement>): void {
+        if(board.totalTurns -2 >= 0){
+            setBoard(boardHistory.current[board.totalTurns - 2]);
+        }
+    }
+
+    function doMoveForward(e: React.MouseEvent<HTMLButtonElement>): void {
+        if(board.totalTurns < boardHistory.current.length){
+            setBoard(boardHistory.current[board.totalTurns]);
+        }
+    }
+
     return (
         <>
             <div className="modal hidden" ref={modalRef}>
@@ -160,7 +180,10 @@ export default function Referee() {
                             </p>
                         )}
                     </div>
-                    
+                    <div className="navigation">
+                        <button onClick={doMoveBack}>◀</button>
+                        <button onClick={doMoveForward}>▶</button>
+                    </div>
                 </div>
             </main>
             
