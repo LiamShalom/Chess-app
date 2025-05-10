@@ -123,7 +123,7 @@ export default function Referee() {
             setModalMessage("It's a stalemate!")
             endgameModalRef.current?.classList.remove("hidden");
         }else if(board.winningTeam !== undefined){
-            setModalMessage(`The winning team is ${board.winningTeam === TeamType.OUR ? "white" : "black"}!`);
+            setModalMessage(`${board.winningTeam === TeamType.OUR ? "White" : "Black"} won!`);
             endgameModalRef.current?.classList.remove("hidden");
         }
     }

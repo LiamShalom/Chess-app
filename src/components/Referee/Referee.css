@@ -3,6 +3,10 @@ main{
     gap: 1rem;
 }
 
+.modal {
+    right: 272px;
+}
+
 .information{
     display: flex;
     flex-direction: column;
