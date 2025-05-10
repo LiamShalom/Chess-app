@@ -8,7 +8,7 @@ A simple two-player chess game built with React. Play classic chess locally with
 - 🔁 Turn-based play for two players on the same device
 - 🔍 Visual move highlighting
 - ✅ Check/checkmate detection
-- - 📙Move history with board navigation
+- 📙Move history with board navigation
 - ♻ Reset game button
 
 ## 🚀 Getting Started
