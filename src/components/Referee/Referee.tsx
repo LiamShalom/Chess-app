@@ -6,6 +6,8 @@ import { PieceType, TeamType } from "../../Types";
 import { Pawn } from "../../models/Pawn";
 import { Board } from "../../models/Board";
 import "./Referee.css";
+import { Move } from "../../models/Move";
+import {Tooltip as ReactTooltip} from "react-tooltip";
 
 export default function Referee() {
     const [board, setBoard] = useState<Board>(initialBoard.clone());
@@ -14,7 +16,9 @@ export default function Referee() {
     const modalRef = useRef<HTMLDivElement>(null);
     const endgameModalRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLDivElement>(null);
     const boardHistory = useRef<Board[]>([initialBoard.clone()]);
+    const moveHistory = useRef<Move[]>([]);
 
     useEffect(() => {
         const el = containerRef.current;
@@ -23,6 +27,7 @@ export default function Referee() {
 
     function playMove(playedPiece: Piece, destination: Position): boolean {
         // If not on current move
+        console.log(board.totalTurns)
         if (boardHistory.current.length !== board.totalTurns) {
             return false;
         }
@@ -47,11 +52,12 @@ export default function Referee() {
         // playMove modifies the board thus we setBoard
         const clonedBoard = board.clone();
         clonedBoard.totalTurns += 1;
-        console.log(clonedBoard.totalTurns);
         // Playing the move
         playedMoveIsValid = clonedBoard.playMove(enPassantMove, validMove, playedPiece, destination);
-        if(playedMoveIsValid) boardHistory.current.push(clonedBoard); 
-        console.log(boardHistory)
+        if(playedMoveIsValid){
+            boardHistory.current.push(clonedBoard); 
+            moveHistory.current = clonedBoard.moves;
+        } 
 
         checkForEndGame(clonedBoard);
         setBoard(clonedBoard);
@@ -147,6 +153,7 @@ export default function Referee() {
             setBoard(boardHistory.current[board.totalTurns]);
         }
     }
+    
 
     return (
         <>
@@ -171,22 +178,33 @@ export default function Referee() {
                 <div className="information">
                     <p>Current Team: {board.currentTeam === TeamType.OUR ? "White" : "Black"}</p>
                     <div className="moves" ref={containerRef}>
-                        {board.moves.map((m, i) => 
-                            <p key={i}>
-                                {i % 2 === 0 ? `${Math.ceil((i+1)/2)}.` : ""}
+                        {moveHistory.current.map((m, i) => 
+                            <p key={i} >
+                                <span className="turn-number">
+                                    {i % 2 === 0 ? `${Math.ceil((i+1)/2)}.` : ""}
+                                </span>    
                                 &emsp;
-                                <img src={m.toImage()} alt="" />
-                                {m.toMessage()}
+                                <span className={i === board.totalTurns-2 ? "highlight" : ""}>
+                                    <img src={m.toImage()} alt="" />
+                                    {m.toMessage()}
+                                </span>
+                                
                             </p>
                         )}
                     </div>
-                    <div className="navigation">
-                        <button onClick={doMoveBack}>◀</button>
-                        <button onClick={doMoveForward}>▶</button>
+                    <div className="navigation" ref={buttonRef}>
+                        <button 
+                            onClick={doMoveBack} disabled={board.totalTurns -2 < 0} 
+                            data-tooltip-id="tooltip" data-tooltip-content="Previous Move">◀
+                        </button>
+                        <button 
+                            onClick={doMoveForward} disabled={board.totalTurns >= boardHistory.current.length} 
+                            data-tooltip-id="tooltip" data-tooltip-content="Next Move">▶
+                        </button>
+                        <ReactTooltip id="tooltip" place="top" />
                     </div>
                 </div>
             </main>
-            
         </>
     )
 }

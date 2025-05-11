@@ -24,14 +24,10 @@ main{
     grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
     margin-top: 2rem;
-    overflow-y: auto;
+    overflow-y:auto;
     max-height: 480px;
     scrollbar-color: rgb(0, 0, 0, 0.3) rgb(0, 0, 0, 0.1);
     scrollbar-width: thin;
-}
-
-.information > .moves > p:first-child{
-    margin-top: auto;
 }
 
 .information > .moves img{
@@ -55,4 +51,28 @@ main{
     background-color:darkgray;
     cursor: pointer;
     border: none;
+}
+
+.information > .navigation button:disabled{
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.highlight {
+    background-color: dimgray;
+    font-weight: bold;
+    border-radius: 4px;
+    display: inline-block;
+    padding-right: 0.2rem;
+}
+
+.highlight img {
+    vertical-align: middle;
+    border-radius: 4px;
+}
+
+.turn-number {
+    display: inline-block;
+    width: 3ch;
+    text-align: left;
 }
