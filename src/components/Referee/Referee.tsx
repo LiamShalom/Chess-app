@@ -27,7 +27,6 @@ export default function Referee() {
 
     function playMove(playedPiece: Piece, destination: Position): boolean {
         // If not on current move
-        console.log(board.totalTurns)
         if (boardHistory.current.length !== board.totalTurns) {
             return false;
         }

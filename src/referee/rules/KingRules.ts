@@ -80,7 +80,9 @@ export const getCastlingMoves = (king: Piece, boardState: Piece[]): Position[] =
 
         if(!valid) continue;
 
-        possibleMoves.push(rook.position.clone());
+        const castlingMove = king.position.clone();
+        castlingMove.x += direction * 2;
+        possibleMoves.push(castlingMove);
         
     }
     

@@ -125,10 +125,10 @@ export class Board {
         const piecesBeforeMove = this.pieces.length;
         this.checkForAmbiguity(playedPiece, destination);
         // If the move is a castling move
-        const destinationPiece = this.pieces.find(p => p.samePosition(destination));
-        if(playedPiece.isKing && destinationPiece?.isRook && destinationPiece.team === playedPiece.team){
-            const direction = (destinationPiece.position.x - playedPiece.position.x > 0) ? 1 : -1;
+        if(playedPiece.isKing && Math.abs(destination.x - playedPiece.position.x) === 2){
+            const direction = (destination.x - playedPiece.position.x > 0) ? 1 : -1;
             const newKingXPosition = playedPiece.position.x + direction * 2
+            const destinationPiece = this.pieces.find(p => p.samePosition(new Position(direction === 1 ? 7 : 0, destination.y )))!;
             this.pieces = this.pieces.map((piece) => {
                 if(piece.samePiecePosition(playedPiece)){
                     piece.position.x = newKingXPosition;
