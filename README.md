@@ -26,3 +26,10 @@ Clone the repo and install dependencies:
 git clone https://github.com/LiamShalom/Chess-app.git
 cd Chess-app
 npm install
+```
+
+### Run Application
+
+```bash
+npm start
+```
