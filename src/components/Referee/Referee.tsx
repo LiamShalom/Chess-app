@@ -128,12 +128,8 @@ export default function Referee() {
     }
 
     function checkForEndGame(board: Board){
-        if(board.draw){
-            setModalMessage("It's a draw!")
-            endgameModalRef.current?.classList.remove("hidden");
-        }
-        if(board.stalemate){
-            setModalMessage("It's a stalemate!")
+        if(board.draw.isDraw){
+            setModalMessage("Draw by " + board.draw.type);
             endgameModalRef.current?.classList.remove("hidden");
         }else if(board.winningTeam !== undefined){
             setModalMessage(`${board.winningTeam === TeamType.OUR ? "White" : "Black"} won!`);

@@ -9,8 +9,7 @@ export class Board {
     pieces: Piece[];
     totalTurns: number
     winningTeam?: TeamType;
-    stalemate: boolean;
-    draw: boolean;
+    draw: {isDraw: boolean, type: string};
     moves: Move[];
     repeatedPositions: {[key: string]: number};
     turnsWithNoCaptureOrPawnMove: number;
@@ -21,8 +20,7 @@ export class Board {
          turnsWithNoCaptureOrPawnMove: number) {
         this.pieces = pieces;
         this.totalTurns = totalTurns;
-        this.stalemate = false;
-        this.draw = false;
+        this.draw = {isDraw: false, type: ""};
         this.moves = moves;
         this.repeatedPositions = repeatedPositions
         this.turnsWithNoCaptureOrPawnMove = turnsWithNoCaptureOrPawnMove;
@@ -198,7 +196,7 @@ export class Board {
             (this.pieces.filter(p => p.team === TeamType.OPPONENT).length <= 2 && 
             this.pieces.filter(p => p.team === TeamType.OPPONENT && (p.isBishop || p.isKnight)).length <= 1)){
 
-            this.draw = true;
+            this.draw = {isDraw: true, type: "insufficient material"};
         }   
     }
 
@@ -213,7 +211,7 @@ export class Board {
         }
 
         if(this.repeatedPositions[piecesStringify] === 3){
-            this.draw = true;
+            this.draw = {isDraw: true, type: "repetition"};
         }
     }
 
@@ -223,13 +221,13 @@ export class Board {
         if(enemyMoves.find(m => m?.samePosition(kingPosition))){
             this.winningTeam = (this.currentTeam === TeamType.OUR) ? TeamType.OPPONENT : TeamType.OUR;
         }else{
-            this.stalemate = true;
+            this.draw = {isDraw: true, type: "stalemate"};
         }  
     }
 
     checkForFiftyMove(): void {
         if(this.turnsWithNoCaptureOrPawnMove >= 50){
-            this.draw = true;
+            this.draw = {isDraw: true, type: "50 move rule"};
         }
     }
 
