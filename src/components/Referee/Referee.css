@@ -39,7 +39,7 @@ main{
 .information > .navigation{
     display: inline-flex;
     position:absolute;
-    bottom: 48px;
+    bottom: 110px;
     gap: 1rem;
 }
 
